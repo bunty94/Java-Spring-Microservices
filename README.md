@@ -291,4 +291,78 @@ Feign makes easy to invoke other micorservices. Integration with client side loa
 
 
 
+========15-06-2018==========
+
+step 37 to 41: setup zipkin
+
+download rabbit mq,erlang. check for erlang compatibilty with rabbit mq in rabbitmq site
+
+https://zipkin.io/quickstart.sh
+
+open quickstart.sh this will download zipkin.jar
+
+open cmd 
+check for java -version minimum required 1.8
+
+cd F:\Nithin\Video Tutorials\Spring\Spring
+
+java -jar zipkin.jar
+
+http://localhost:9411
+
+kill the server: cntrl + C
+
+we need zipkin connect rabbitmq.
+
+SET RABBIT_URI=amqp://localhost
+
+java -jar zipkin.jar
+	
+connecting microservices to zipkin.
+
+add to api-gateway,conversion,exchange service.
+<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-sleuth-zipkin</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bus-amqp</artifactId>
+		</dependency>
+
+		
+run: zipkin server,eureka,exchange,conversion,zuul api-gateway.
+
+check if all are running.
+
+http://localhost:9411/zipkin/
+http://localhost:8761/
+
+traces of a microservice can be checked from zipkin dashboard.
+
+
+step 42: understanding need for cloud bus.
+
+limit services.
+management.security.enabled=false
+
+
+when a property is change property file. http://{host and port}/application/refresh or http://{host and port}/application/actuator/refresh need to refresh in order to reflect changes.
+ex: http://localhost:8080/application/refresh or  http://localhost:8080/application/actuator/refresh
+
+if there are 10 microservice with 3 instances then hitting every service refresh takes lot of time to do and not so practical.
+
+step 43:
+add to limits and spring-cloud-config
+
+<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bus-amqp</artifactId>
+		</dependency>
+		
+http://localhost:8080/bus/refresh.
+or 
+spring-boot 2.0.0+
+http://localhost:8080/actuator/bus-refresh this will update for all instances of microservice.
+
 		
